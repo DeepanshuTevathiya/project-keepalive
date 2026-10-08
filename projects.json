@@ -3,5 +3,10 @@
     "name": "SnapClass",
     "url": "https://snapclass-deepminds.streamlit.app/",
     "type": "streamlit"
+  },
+  {
+    "name": "Nova",
+    "url": "https://nova-agent-deepminds.streamlit.app/",
+    "type": "streamlit"
   }
 ]
