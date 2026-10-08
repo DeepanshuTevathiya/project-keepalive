@@ -8,5 +8,10 @@
     "name": "Nova",
     "url": "https://nova-agent-deepminds.streamlit.app/",
     "type": "streamlit"
+  },
+  {
+    "name": "Text Summarizer",
+    "url": "https://huggingface.co/spaces/DeepanshuT/Text_sumarizer_app",
+    "type": "huggingface"
   }
 ]
