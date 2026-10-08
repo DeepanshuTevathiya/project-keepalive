@@ -12,7 +12,10 @@ function authorized(request) { return Boolean(process.env.ADMIN_KEY) && request.
 async function getProjects() {
   const response = await fetch(`https://api.github.com/repos/${repository()}/contents/${FILE_PATH}?ref=${encodeURIComponent(BRANCH)}`, { headers: githubHeaders() });
   const data = await response.json();
-  if (!response.ok) throw new Error(data.message || "GitHub could not read projects.json.");
+  if (!response.ok) {
+    if (response.status === 404) throw new Error("GitHub could not find projects.json. Check that GITHUB_REPO is DeepanshuTevathiya/project-keepalive, the file is on main, and the token has access to this repository.");
+    throw new Error(data.message || "GitHub could not read projects.json.");
+  }
   const projects = JSON.parse(Buffer.from(data.content, "base64").toString("utf8"));
   if (!Array.isArray(projects)) throw new Error("projects.json must contain a list.");
   return { projects, sha: data.sha };
@@ -40,7 +43,10 @@ module.exports = async function handler(request, response) {
     const projects = [...current.projects, project];
     const update = await fetch(`https://api.github.com/repos/${repository()}/contents/${FILE_PATH}`, { method: "PUT", headers: { ...githubHeaders(), "Content-Type": "application/json" }, body: JSON.stringify({ message: `Add ${project.name} to keepalive projects`, content: Buffer.from(`${JSON.stringify(projects, null, 2)}\n`).toString("base64"), sha: current.sha, branch: BRANCH }) });
     const result = await update.json();
-    if (!update.ok) throw new Error(result.message || "GitHub could not update projects.json.");
+    if (!update.ok) {
+      if (update.status === 404) throw new Error("GitHub could not update the repository. Check GITHUB_REPO and the token's repository access.");
+      throw new Error(result.message || "GitHub could not update projects.json.");
+    }
     return response.status(201).json({ projects });
   } catch (error) { return response.status(500).json({ error: error.message || "Unexpected server error." }); }
 };

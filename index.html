@@ -13,6 +13,9 @@
       .card { background: rgba(20, 25, 36, .9); border: 1px solid #303b52; border-radius: 18px; padding: 24px; margin-top: 28px; box-shadow: 0 20px 60px #0004; }
       form { display: grid; grid-template-columns: 1fr 1.4fr .8fr 1fr auto; gap: 12px; align-items: end; }
       label { display: grid; gap: 7px; color: #b7c3d8; font-size: .9rem; }
+      .key-field { position: relative; }
+      .key-toggle { display: flex; align-items: center; gap: 6px; margin-top: 7px; color: #aeb9ce; font-size: .8rem; }
+      .key-toggle input { accent-color: #76d6b0; }
       input, select, button { border: 1px solid #45526d; border-radius: 10px; padding: 12px; font: inherit; }
       input, select { color: #f4f6fb; background: #151b27; }
       button { color: #07111e; background: #76d6b0; border: 0; font-weight: 700; cursor: pointer; }
@@ -38,7 +41,7 @@
           <label>Project name<input id="name" name="name" required placeholder="My demo" /></label>
           <label>Project URL<input id="url" name="url" type="url" required placeholder="https://..." /></label>
           <label>Type<select id="type" name="type"><option value="streamlit">Streamlit</option><option value="huggingface">Hugging Face</option></select></label>
-          <label>Admin key<input id="admin-key" name="adminKey" type="password" required autocomplete="off" /></label>
+          <label class="key-field">Admin key<input id="admin-key" name="adminKey" type="password" required autocomplete="off" /><span class="key-toggle"><input id="show-key" type="checkbox" /> Show admin key</span></label>
           <button id="submit" type="submit">Add project</button>
         </form>
         <p id="message" role="status"></p>
@@ -70,6 +73,9 @@
         catch (error) { showMessage(error.message, true); }
       }
       document.querySelector('#admin-key').addEventListener('change', loadProjects);
+      document.querySelector('#show-key').addEventListener('change', (event) => {
+        document.querySelector('#admin-key').type = event.target.checked ? 'text' : 'password';
+      });
       form.addEventListener('submit', async (event) => {
         event.preventDefault(); submit.disabled = true; showMessage('Saving project…');
         const payload = { name: document.querySelector('#name').value, url: document.querySelector('#url').value, type: document.querySelector('#type').value };
